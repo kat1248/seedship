@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"math/rand"
 	"time"
 )
@@ -44,7 +43,5 @@ func randomDamageHigh() int {
 
 func either(choices ...string) string {
 	r := random(0, len(choices))
-	log.Println("choices =", choices)
-	log.Println("r =", r)
 	return choices[r]
 }

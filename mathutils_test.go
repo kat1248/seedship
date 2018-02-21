@@ -29,3 +29,17 @@ func TestMin(t *testing.T) {
 		t.Errorf("Clamp was incorrect, got %d, expected 6", x)
 	}
 }
+
+func TestRandom(t *testing.T) {
+	for i := 0; i < 1000; i++ {
+		x := random(20, 52)
+		if x < 20 {
+			t.Error("random out of range [20, 52], got %d", x)
+			return
+		}
+		if x > 52 {
+			t.Error("random out of range [20, 52], got %d", x)
+			return
+		}
+	}
+}

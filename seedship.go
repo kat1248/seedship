@@ -1,6 +1,6 @@
 package main
 
-import "log"
+import "fmt"
 
 var (
 	systems      systemState
@@ -14,9 +14,9 @@ func main() {
 	systems := newSystemState()
 	gameIntro()
 	if done(systems) {
-		log.Println("done")
+		fmt.Println("done")
 		return
 	}
 	planet := generatePlanet(systems)
-	log.Println("planet =", planet)
+	fmt.Println("planet =", planet)
 }

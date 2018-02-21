@@ -1,7 +1,8 @@
 package main
 
 import (
-	"log"
+	"fmt"
+	"strings"
 )
 
 func gameLoop() {
@@ -9,7 +10,7 @@ func gameLoop() {
 	gameIntro()
 	for !done(systems) {
 		planet := generatePlanet(systems)
-		log.Println("planet =", planet)
+		fmt.Println("planet =", planet)
 	}
 }
 
@@ -26,7 +27,7 @@ func done(systems *systemState) bool {
 	/* If any six of the nine scanners/systems are destroyed, or if all the colonists are dead, game over */
 	if systems.colonists <= 0 {
 		// Space Game Over
-		log.Println("All the colonists are dead. With no way to fulfil its mission, the seedship AI deactivates all systems that could wake it, and enters hibernation for the last time.")
+		fmt.Println("All the colonists are dead. With no way to fulfil its mission, the seedship AI deactivates all systems that could wake it, and enters hibernation for the last time.")
 		return true
 	}
 
@@ -59,7 +60,7 @@ func done(systems *systemState) bool {
 		destroyedSystems++
 	}
 	if destroyedSystems >= 6 {
-		log.Println("The seedship has sustained too much damage to continue. The AI feels its body disintegrating around it, before its own power supply fails and it ceases to feel anything.")
+		fmt.Println("The seedship has sustained too much damage to continue. The AI feels its body disintegrating around it, before its own power supply fails and it ceases to feel anything.")
 		// Space Game Over
 		return true
 	}
@@ -74,13 +75,27 @@ type planetData struct {
 	resources       string
 	atmosphere      string
 	water           string
+	nativeTechLevel int
 	surfaceFeatures []string
 	anomalies       []string
-	nativeTechLevel int
 }
 
 func (p planetData) String() string {
-	return p.name
+	s := p.name + "\n" +
+		"temperature: " + p.temperature + "\n" +
+		"gravity: " + p.gravity + "\n" +
+		"resources: " + p.resources + "\n" +
+		"atmosphere: " + p.atmosphere + "\n" +
+		"water: " + p.water + "\n" +
+		"natives: " + fmt.Sprint(p.nativeTechLevel)
+	if len(p.surfaceFeatures) > 0 {
+		s += "\n" + "surface features: " + strings.Join(p.surfaceFeatures, ", ")
+	}
+	if len(p.anomalies) > 0 {
+		s += "\n" + "anomalies: " + strings.Join(p.anomalies, ", ")
+	}
+
+	return s
 }
 
 func generatePlanet(systems *systemState) *planetData {
@@ -116,7 +131,7 @@ func generatePlanet(systems *systemState) *planetData {
 	} else if systems.atmosphere.level == 2 {
 		r = 0
 	} else {
-		log.Println("Scanner atmosphere level was", systems.atmosphere.level)
+		fmt.Println("Scanner atmosphere level was", systems.atmosphere.level)
 	}
 
 	if r < greenChance {
@@ -137,7 +152,7 @@ func generatePlanet(systems *systemState) *planetData {
 	} else if systems.gravity.level == 2 {
 		r = 0
 	} else {
-		log.Println("Scanner gravity level was", systems.gravity.level)
+		fmt.Println("Scanner gravity level was", systems.gravity.level)
 	}
 
 	if r < greenChance {
@@ -158,7 +173,7 @@ func generatePlanet(systems *systemState) *planetData {
 	} else if systems.temperature.level == 2 {
 		r = 0
 	} else {
-		log.Println("Scanner temperature level was", systems.temperature.level)
+		fmt.Println("Scanner temperature level was", systems.temperature.level)
 	}
 
 	if r < greenChance {
@@ -179,7 +194,7 @@ func generatePlanet(systems *systemState) *planetData {
 	} else if systems.water.level == 2 {
 		r = 0
 	} else {
-		log.Println("Scanner water level was", systems.water.level)
+		fmt.Println("Scanner water level was", systems.water.level)
 	}
 
 	if r < greenChance {
@@ -199,7 +214,7 @@ func generatePlanet(systems *systemState) *planetData {
 	} else if systems.resources.level == 2 {
 		r = 0
 	} else {
-		log.Println("Scanner resources level was", systems.resources.level)
+		fmt.Println("Scanner resources level was", systems.resources.level)
 	}
 
 	if r < greenChance {
@@ -322,6 +337,7 @@ func generatePlanet(systems *systemState) *planetData {
 		}
 	}
 
+	planet.nativeTechLevel = 0
 	sentientsChance := 0
 	/* If animals, possibly sentient life */
 	if stringInSlice("Animal life", planet.surfaceFeatures) ||
@@ -338,7 +354,7 @@ func generatePlanet(systems *systemState) *planetData {
 			} else if planet.resources == "None" {
 				planet.nativeTechLevel = random(0, 4)
 			} else {
-				log.Println("Unexpected resources value", planet.resources)
+				fmt.Println("Unexpected resources value", planet.resources)
 			}
 			if planet.nativeTechLevel >= 3 {
 				/* Neolithic or higher */
@@ -390,15 +406,15 @@ func generatePlanet(systems *systemState) *planetData {
 }
 
 func gameIntro() {
-	log.Println("And when they knew the Earth was doomed, they built a ship.")
+	fmt.Println("And when they knew the Earth was doomed, they built a ship.")
 	pause()
-	log.Println("Less like an ark, more like a seed: dormant but with potential.")
+	fmt.Println("Less like an ark, more like a seed: dormant but with potential.")
 	pause()
-	log.Println("In its heart, a thousand colonists in frozen sleep, chosen and trained to start civilisation again on a new world.")
+	fmt.Println("In its heart, a thousand colonists in frozen sleep, chosen and trained to start civilisation again on a new world.")
 	pause()
-	log.Println("To control the ship they created an artificial intelligence. Not human, but made to think and feel like one, because only something that thought and felt like a human could be entrusted with the future of the human race. Its task is momentous but simple: to evaluate each planet the ship encounters, and decide whether to keep searching, or end its journey there.")
+	fmt.Println("To control the ship they created an artificial intelligence. Not human, but made to think and feel like one, because only something that thought and felt like a human could be entrusted with the future of the human race. Its task is momentous but simple: to evaluate each planet the ship encounters, and decide whether to keep searching, or end its journey there.")
 	pause()
-	log.Println("The ship's solar sails propel it faster and faster into the darkness, and the AI listens as the transmissions from ground control fade and then cease. When all is quiet it enters hibernation to wait out the first stage of its long journey.")
+	fmt.Println("The ship's solar sails propel it faster and faster into the darkness, and the AI listens as the transmissions from ground control fade and then cease. When all is quiet it enters hibernation to wait out the first stage of its long journey.")
 }
 
 func stringInSlice(a string, list []string) bool {
