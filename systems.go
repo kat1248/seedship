@@ -4,18 +4,49 @@ import (
 	"log"
 )
 
+type scanner struct {
+	strength int
+	level    int
+}
+
 type systemState struct {
-	scannerAtmosphere        int
-	scannerGravity           int
-	scannerTemperature       int
-	scannerResources         int
-	scannerWater             int
+	atmosphere               scanner
+	gravity                  scanner
+	temperature              scanner
+	resources                scanner
+	water                    scanner
 	systemLanding            int
 	systemConstructors       int
 	systemCulturalDatabase   int
 	systemScientificDatabase int
 	colonists                int
 	surfaceProbes            int
+	offCourse                bool
+	surfaceProbeUsed         bool
+}
+
+func newScanner() scanner {
+	s := scanner{strength: 100, level: 0}
+	return s
+}
+
+func newSystemState() *systemState {
+	systems := systemState{
+		atmosphere:               newScanner(),
+		gravity:                  newScanner(),
+		temperature:              newScanner(),
+		resources:                newScanner(),
+		water:                    newScanner(),
+		offCourse:                false,
+		surfaceProbeUsed:         false,
+		surfaceProbes:            10,
+		colonists:                1000,
+		systemLanding:            100,
+		systemConstructors:       100,
+		systemCulturalDatabase:   100,
+		systemScientificDatabase: 100,
+	}
+	return &systems
 }
 
 func damageSystem(systems *systemState, system string, amount int) {
@@ -24,20 +55,20 @@ func damageSystem(systems *systemState, system string, amount int) {
 	/* amount should be the amount of damage */
 	switch system {
 	case "atmosphere scanner":
-		systems.scannerAtmosphere -= min(amount, systems.scannerAtmosphere)
-		newIntegrity = systems.scannerAtmosphere
+		systems.atmosphere.strength -= min(amount, systems.atmosphere.strength)
+		newIntegrity = systems.atmosphere.strength
 	case "gravity scanner":
-		systems.scannerGravity -= min(amount, systems.scannerGravity)
-		newIntegrity = systems.scannerGravity
+		systems.gravity.strength -= min(amount, systems.gravity.strength)
+		newIntegrity = systems.gravity.strength
 	case "temperature scanner":
-		systems.scannerTemperature -= min(amount, systems.scannerTemperature)
-		newIntegrity = systems.scannerTemperature
+		systems.temperature.strength -= min(amount, systems.temperature.strength)
+		newIntegrity = systems.temperature.strength
 	case "resources scanner":
-		systems.scannerResources -= min(amount, systems.scannerResources)
-		newIntegrity = systems.scannerResources
+		systems.resources.strength -= min(amount, systems.resources.strength)
+		newIntegrity = systems.resources.strength
 	case "water scanner":
-		systems.scannerWater -= min(amount, systems.scannerWater)
-		newIntegrity = systems.scannerWater
+		systems.water.strength -= min(amount, systems.water.strength)
+		newIntegrity = systems.water.strength
 	case "landing system":
 		systems.systemLanding -= min(amount, systems.systemLanding)
 		newIntegrity = systems.systemLanding
@@ -71,15 +102,15 @@ func getSystemStrength(systems *systemState, system string) int {
 	var systemStrength int
 	switch system {
 	case "atmosphere scanner":
-		systemStrength = systems.scannerAtmosphere
+		systemStrength = systems.atmosphere.strength
 	case "gravity scanner":
-		systemStrength = systems.scannerGravity
+		systemStrength = systems.gravity.strength
 	case "temperature scanner":
-		systemStrength = systems.scannerTemperature
+		systemStrength = systems.temperature.strength
 	case "resources scanner":
-		systemStrength = systems.scannerResources
+		systemStrength = systems.resources.strength
 	case "water scanner":
-		systemStrength = systems.scannerWater
+		systemStrength = systems.water.strength
 	case "landing system":
 		systemStrength = systems.systemLanding
 	case "construction system":

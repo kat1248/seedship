@@ -1,9 +1,13 @@
 package main
 
-import "math/rand"
+import (
+	"log"
+	"math/rand"
+	"time"
+)
 
 func init() {
-	rand.Seed(42) // time.Now().UnixNano()
+	rand.Seed(time.Now().UnixNano())
 }
 
 func clamp(num, min, max int) int {
@@ -24,7 +28,7 @@ func min(a, b int) int {
 }
 
 func random(min, max int) int {
-	return min + rand.Intn(max-min+1)
+	return min + rand.Intn(max-min)
 }
 
 func randomDamageLow() int {
@@ -36,4 +40,11 @@ func randomDamageMedium() int {
 
 func randomDamageHigh() int {
 	return random(35, 65)
+}
+
+func either(choices ...string) string {
+	r := random(0, len(choices))
+	log.Println("choices =", choices)
+	log.Println("r =", r)
+	return choices[r]
 }
