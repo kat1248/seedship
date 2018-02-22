@@ -14,7 +14,8 @@ func gameLoop(count int) {
 		visitedSystems++
 		nextEncounter(systems)
 		planet := generatePlanet(systems)
-		fmt.Println("planet =", planet)
+		fmt.Println("planet #", visited())
+		fmt.Println(planet)
 	}
 }
 
