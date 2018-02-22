@@ -45,3 +45,8 @@ func either(choices ...string) string {
 	r := random(0, len(choices))
 	return choices[r]
 }
+
+func choose(choices ...interface{}) interface{} {
+	r := random(0, len(choices))
+	return choices[r]
+}

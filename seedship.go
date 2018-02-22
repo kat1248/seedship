@@ -3,7 +3,6 @@ package main
 import "fmt"
 
 var (
-	systems      systemState
 	newIntegrity int
 )
 
@@ -12,7 +11,7 @@ func init() {
 
 func main() {
 	systems := newSystemState()
-	gameIntro()
+	//gameIntro()
 	if done(systems) {
 		fmt.Println("done")
 		return

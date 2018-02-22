@@ -5,19 +5,24 @@ import (
 )
 
 func TestDamageSystem(t *testing.T) {
-	var systems systemState
-	systems.atmosphere.strength = 100
-	damageSystem(&systems, "atmosphere scanner", 10)
+	systems := newSystemState()
+	damageSystem(systems, atmosphereScanner, 10)
 	if systems.atmosphere.strength != 90 {
 		t.Errorf("damage system incorrect, got %d, expected 90", systems.atmosphere.strength)
 	}
 }
 
 func TestGetSystemStrength(t *testing.T) {
-	var systems systemState
-	systems.atmosphere.strength = 90
-	foo := getSystemStrength(&systems, "atmosphere scanner")
-	if foo != 90 {
-		t.Errorf("system strenght incorrect, got %d, expected 90", foo)
+	systems := newSystemState()
+	foo := getSystemStrength(systems, atmosphereScanner)
+	if foo != 100 {
+		t.Errorf("system strength incorrect, got %d, expected 90", foo)
+	}
+}
+
+func TestSystemToString(t *testing.T) {
+	x := culturalDatabase
+	if x.String() != "cultural database" {
+		t.Errorf("string conversion incorrect, got %s, expected \"cultural database\"", x)
 	}
 }
