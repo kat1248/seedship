@@ -3622,54 +3622,7 @@ Scientific database: <<textbox "$system_scientific_database" $system_scientific_
 		<</replace>>
 		<<fadeIn "#result-area">>
 	<</link>></div>
-<</if>></div><div tiddler="Move on" tags="nobr" created="201703061900" modifier="twee" twine-position="1410,850">/* Random encounter chances */
-/* Initial: 2/10 uneventful, 7/10 common, 1/10 rare */
-/* Final: 5/10 malfunction, 4/10 common, 1/10 rare */
-
-<<unset $planet>>
-<<unset $off_course>>
-
-<<set _malfunction_chance = Math.min(visited()-5, 5)>>
-
-<<set _encounter = $last_encounter>>
-<<for _n = 0; $last_encounter == _encounter; _n++>>
-	<<set _r = random(0,9)>>
-	<<if _r < _malfunction_chance>>
-			/* MALFUNCTIONS */
-		<<set _encounter = either($MO_encounters_malfunction)>>
-		<<set $last_encounter_category = "Malfunction">>
-	<<elseif _r < 2 & $MO_encounters_uneventful.length > 0 & $last_encounter_category != "Uneventful">>
-			/* NOTHING INTERESTING HAPPENS - once each per playthrough */
-		<<set _r2 = random(0,($MO_encounters_uneventful.length)-1)>>
-		<<set _encounter = $MO_encounters_uneventful[_r2]>>
-		<<set $MO_encounters_uneventful.splice(_r2,1)>>
-		<<set $last_encounter_category = "Uneventful">>
-	<<elseif visited() < 3>>
-			/* FIRST TWO EVENTS */
-		<<set _encounter = either($MO_encounters_first_two)>>
-		<<set $last_encounter_category = "Common">>
-	<<elseif _r == 9 & $MO_encounters_rare.length > 0 & $last_encounter_category != "Rare">>
-			/* RARE EVENTS - once each per playthrough */
-		<<set _r2 = random(0,($MO_encounters_rare.length)-1)>>
-		<<set _encounter = $MO_encounters_rare[_r2]>>
-		<<set $MO_encounters_rare.splice(_r2,1)>>
-		<<set $last_encounter_category = "Rare">>
-	<<else>>
-			/* COMMON EVENTS */
-		<<set _encounter = either($MO_encounters_common)>>
-		<<set $last_encounter_category = "Common">>
-	<</if>>
-<</for>>
-<<set $last_encounter = _encounter>>
-
-<<if visited() == 1>>
-	The AI judges the first planet to be unsuitable. It turns its scanners away, spreads its solar sails, and begins another long journey through the void.
-
-	<br><br><<continueLink _encounter>>
-<<else>>
-	<<goto _encounter>>
-<</if>>
-</div><div tiddler="Stylesheet" tags="stylesheet" created="201703061900" modifier="twee" twine-position="10,150">/* Small-screen (mobile) formatting is default. Then changed for big screens. */
+<</if>></div></div><div tiddler="Stylesheet" tags="stylesheet" created="201703061900" modifier="twee" twine-position="10,150">/* Small-screen (mobile) formatting is default. Then changed for big screens. */
 
 .debug-text {
 	/* Un-comment display:none for release */

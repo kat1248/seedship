@@ -3,12 +3,12 @@ package main
 type Atmosphere int
 
 const (
-	atmBreathable    Atmosphere = iota
-	atmMarginal      Atmosphere = iota
-	atmCorrosive     Atmosphere = iota
-	atmToxic         Atmosphere = iota
-	atmNonBreathable Atmosphere = iota
-	atmNone          Atmosphere = iota
+	atmBreathable Atmosphere = iota
+	atmMarginal
+	atmCorrosive
+	atmToxic
+	atmNonBreathable
+	atmNone
 )
 
 func (atmosphere Atmosphere) String() string {
@@ -29,11 +29,11 @@ func (atmosphere Atmosphere) String() string {
 type Gravity int
 
 const (
-	grvVeryLow  Gravity = iota
-	grvLow      Gravity = iota
-	grvModerate Gravity = iota
-	grvHigh     Gravity = iota
-	grvVeryHigh Gravity = iota
+	grvVeryLow Gravity = iota
+	grvLow
+	grvModerate
+	grvHigh
+	grvVeryHigh
 )
 
 func (gravity Gravity) String() string {
@@ -54,10 +54,10 @@ type Temperature int
 
 const (
 	tmpVeryCold Temperature = iota
-	tmpCold     Temperature = iota
-	tmpModerate Temperature = iota
-	tmpHot      Temperature = iota
-	tmpVeryHot  Temperature = iota
+	tmpCold
+	tmpModerate
+	tmpHot
+	tmpVeryHot
 )
 
 func (temperature Temperature) String() string {
@@ -77,12 +77,12 @@ func (temperature Temperature) String() string {
 type Water int
 
 const (
-	wtrNone              Water = iota
-	wtrTrace             Water = iota
-	wtrOceans            Water = iota
-	wtrPlanetWideOcean   Water = iota
-	wtrIceCoveredSurface Water = iota
-	wtrIceCaps           Water = iota
+	wtrNone Water = iota
+	wtrTrace
+	wtrOceans
+	wtrPlanetWideOcean
+	wtrIceCoveredSurface
+	wtrIceCaps
 )
 
 func (water Water) String() string {
@@ -104,8 +104,8 @@ type Resources int
 
 const (
 	rscNone Resources = iota
-	rscPoor Resources = iota
-	rscRich Resources = iota
+	rscPoor
+	rscRich
 )
 
 func (resource Resources) String() string {
@@ -125,25 +125,25 @@ type SurfaceFeature int
 type SurfaceFeatureList []SurfaceFeature
 
 const (
-	sfBarrenMoon                  SurfaceFeature = iota
-	sfMetalRichMoon               SurfaceFeature = iota
-	sfUnstableMoon                SurfaceFeature = iota
-	sfOutstandingBeauty           SurfaceFeature = iota
-	sfOutstandingUgliness         SurfaceFeature = iota
-	sfAirtightCaves               SurfaceFeature = iota
-	sfInsulatedCaves              SurfaceFeature = iota
-	sfUnstableGeology             SurfaceFeature = iota
-	sfPlantLife                   SurfaceFeature = iota
-	sfEdiblePlants                SurfaceFeature = iota
-	sfPoisonousPlants             SurfaceFeature = iota
-	sfAnimalLife                  SurfaceFeature = iota
-	sfUsefulAnimals               SurfaceFeature = iota
-	sfDangerousAnimals            SurfaceFeature = iota
-	sfIntelligentLife             SurfaceFeature = iota
-	sfMonumentalRuins             SurfaceFeature = iota
-	sfHighTechRuins               SurfaceFeature = iota
-	sfDangerousRuins              SurfaceFeature = iota
-	sfRegularGeologicalFormations SurfaceFeature = iota
+	sfBarrenMoon SurfaceFeature = iota
+	sfMetalRichMoon
+	sfUnstableMoon
+	sfOutstandingBeauty
+	sfOutstandingUgliness
+	sfAirtightCaves
+	sfInsulatedCaves
+	sfUnstableGeology
+	sfPlantLife
+	sfEdiblePlants
+	sfPoisonousPlants
+	sfAnimalLife
+	sfUsefulAnimals
+	sfDangerousAnimals
+	sfIntelligentLife
+	sfMonumentalRuins
+	sfHighTechRuins
+	sfDangerousRuins
+	sfRegularGeologicalFormations
 )
 
 func (feature SurfaceFeature) String() string {
@@ -201,12 +201,12 @@ type Anomaly int
 type AnomalyList []Anomaly
 
 const (
-	anMoon                    Anomaly = iota
-	anGeologicalAnomaly       Anomaly = iota
-	anVegetation              Anomaly = iota
-	anAnimalLife              Anomaly = iota
-	anPossibleStructures      Anomaly = iota
-	anElectromagneticActivity Anomaly = iota
+	anMoon Anomaly = iota
+	anGeologicalAnomaly
+	anVegetation
+	anAnimalLife
+	anPossibleStructures
+	anElectromagneticActivity
 )
 
 func (anomaly Anomaly) String() string {

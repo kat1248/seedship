@@ -15,17 +15,17 @@ const (
 type ShipSystem int
 
 const (
-	atmosphereScanner  ShipSystem = iota
-	gravityScanner     ShipSystem = iota
-	temperatureScanner ShipSystem = iota
-	resourcesScanner   ShipSystem = iota
-	waterScanner       ShipSystem = iota
-	landingSystem      ShipSystem = iota
-	constructionSystem ShipSystem = iota
-	scientificDatabase ShipSystem = iota
-	culturalDatabase   ShipSystem = iota
-	surfaceProbes      ShipSystem = iota
-	sleepChambers      ShipSystem = iota
+	sysAtmosphereScanner  ShipSystem = iota
+	sysGravityScanner     ShipSystem = iota
+	sysTemperatureScanner ShipSystem = iota
+	sysResourcesScanner   ShipSystem = iota
+	sysWaterScanner       ShipSystem = iota
+	sysLandingSystem      ShipSystem = iota
+	sysConstructionSystem ShipSystem = iota
+	sysScientificDatabase ShipSystem = iota
+	sysCulturalDatabase   ShipSystem = iota
+	sysSurfaceProbes      ShipSystem = iota
+	sysSleepChambers      ShipSystem = iota
 )
 
 func (system ShipSystem) String() string {
@@ -41,54 +41,13 @@ func (system ShipSystem) String() string {
 		"cultural database",
 		"surface probes",
 		"sleep chambers"}
-	if system < atmosphereScanner || system > sleepChambers {
+	if system < sysAtmosphereScanner || system > sysSleepChambers {
 		return "unknown"
 	}
 	return systems[system]
 }
 
 /*
-<<set $MO_encounters_first_two =
-	[	"MO Impact Choice",
-		"MO Comet Choice",
-		"MO Micrometeorite",
-		"MO Radiation Burst",
-		"MO Overheating"] >>
-
-<<set $MO_encounters_uneventful =
-	[	"MO Uneventful 1",
-		"MO Uneventful 2",
-		"MO Uneventful 3",
-		"MO Uneventful 4",
-		"MO Uneventful 5" ] >>
-
-<<set $MO_encounters_common =
-	[	"MO Impact Choice",
-		"MO Comet Choice",
-		"MO Micrometeorite",
-		"MO Protoplanetary Disc",
-		"MO Avoid Dust",
-		"MO Radiation Burst",
-		"MO Sensor Anomaly",
-		"MO Overheating"] >>
-
-<<set $MO_encounters_rare =
-	[	"MO Racist Program",
-		"MO Trailing Drone",
-		"MO Alien Signal",
-		"MO Alien Derelict",
-		"MO Alien Probe",
-		"MO Read Databases"] >>
-
-<<set $MO_encounters_malfunction =
-	[	"MO Probe Malfunction",
-		"MO Computer Failure",
-		"MO Stasis Failure",
-		"MO System Failure",
-		"MO Scanner Failure"] >>
-
-
-
 <<set $tech_level_names =
 	[	"Pre-Stone Age",
 		"Paleolithic",
@@ -133,17 +92,18 @@ func (system ShipSystem) String() string {
 
 */
 
-type scanner struct {
+type Scanner struct {
 	strength int
 	level    int
+	success  bool
 }
 
-type systemState struct {
-	atmosphere               scanner
-	gravity                  scanner
-	temperature              scanner
-	resources                scanner
-	water                    scanner
+type SystemState struct {
+	atmosphere               Scanner
+	gravity                  Scanner
+	temperature              Scanner
+	resources                Scanner
+	water                    Scanner
 	systemLanding            int
 	systemConstructors       int
 	systemCulturalDatabase   int
@@ -153,15 +113,21 @@ type systemState struct {
 	offCourse                bool
 	surfaceProbeUsed         bool
 	planetsVisited           int
+	lastEncounter            Encounter
+	lastEncounterCategory    EncounterCategory
 }
 
-func newSystemState() *systemState {
-	systems := systemState{
-		atmosphere:               scanner{strength: maxStrength, level: 0},
-		gravity:                  scanner{strength: maxStrength, level: 0},
-		temperature:              scanner{strength: maxStrength, level: 0},
-		resources:                scanner{strength: maxStrength, level: 0},
-		water:                    scanner{strength: maxStrength, level: 0},
+func (system SystemState) String() string {
+	return ""
+}
+
+func newSystemState() *SystemState {
+	systems := SystemState{
+		atmosphere:               Scanner{strength: maxStrength, level: 0, success: false},
+		gravity:                  Scanner{strength: maxStrength, level: 0, success: false},
+		temperature:              Scanner{strength: maxStrength, level: 0, success: false},
+		resources:                Scanner{strength: maxStrength, level: 0, success: false},
+		water:                    Scanner{strength: maxStrength, level: 0, success: false},
 		offCourse:                false,
 		surfaceProbeUsed:         false,
 		surfaceProbes:            maxProbes,
@@ -171,43 +137,45 @@ func newSystemState() *systemState {
 		systemCulturalDatabase:   maxStrength,
 		systemScientificDatabase: maxStrength,
 		planetsVisited:           0,
+		lastEncounter:            encNone,
+		lastEncounterCategory:    catCommon,
 	}
 	return &systems
 }
 
-func damageSystem(systems *systemState, system ShipSystem, amount int) {
+func damageSystem(systems *SystemState, system ShipSystem, amount int) {
 	/* Silently apply damage to a system */
 	/* system should be the name of the system */
 	/* amount should be the amount of damage */
 	switch system {
-	case atmosphereScanner:
+	case sysAtmosphereScanner:
 		systems.atmosphere.strength -= min(amount, systems.atmosphere.strength)
 		newIntegrity = systems.atmosphere.strength
-	case gravityScanner:
+	case sysGravityScanner:
 		systems.gravity.strength -= min(amount, systems.gravity.strength)
 		newIntegrity = systems.gravity.strength
-	case temperatureScanner:
+	case sysTemperatureScanner:
 		systems.temperature.strength -= min(amount, systems.temperature.strength)
 		newIntegrity = systems.temperature.strength
-	case resourcesScanner:
+	case sysResourcesScanner:
 		systems.resources.strength -= min(amount, systems.resources.strength)
 		newIntegrity = systems.resources.strength
-	case waterScanner:
+	case sysWaterScanner:
 		systems.water.strength -= min(amount, systems.water.strength)
 		newIntegrity = systems.water.strength
-	case landingSystem:
+	case sysLandingSystem:
 		systems.systemLanding -= min(amount, systems.systemLanding)
 		newIntegrity = systems.systemLanding
-	case constructionSystem:
+	case sysConstructionSystem:
 		systems.systemConstructors -= min(amount, systems.systemConstructors)
 		newIntegrity = systems.systemConstructors
-	case culturalDatabase:
+	case sysCulturalDatabase:
 		systems.systemCulturalDatabase -= min(amount, systems.systemCulturalDatabase)
 		newIntegrity = systems.systemCulturalDatabase
-	case scientificDatabase:
+	case sysScientificDatabase:
 		systems.systemScientificDatabase -= min(amount, systems.systemScientificDatabase)
 		newIntegrity = systems.systemScientificDatabase
-	case sleepChambers:
+	case sysSleepChambers:
 		/* Special: damage to the sleep chambers kills colonists */
 		/* Never kill exactly 1 colonist or leave exactly 1 alive */
 		systems.colonists -= clamp(amount, 2, systems.colonists)
@@ -215,7 +183,7 @@ func damageSystem(systems *systemState, system ShipSystem, amount int) {
 			systems.colonists = 0
 		}
 		newIntegrity = systems.colonists
-	case surfaceProbes:
+	case sysSurfaceProbes:
 		/* Special: damage to the surface probes destroys a surface probe */
 		systems.surfaceProbes -= min(1, systems.surfaceProbes)
 		newIntegrity = systems.surfaceProbes
@@ -224,30 +192,30 @@ func damageSystem(systems *systemState, system ShipSystem, amount int) {
 	}
 }
 
-func getSystemStrength(systems *systemState, system ShipSystem) int {
+func getSystemStrength(systems *SystemState, system ShipSystem) int {
 	var systemStrength int
 	switch system {
-	case atmosphereScanner:
+	case sysAtmosphereScanner:
 		systemStrength = systems.atmosphere.strength
-	case gravityScanner:
+	case sysGravityScanner:
 		systemStrength = systems.gravity.strength
-	case temperatureScanner:
+	case sysTemperatureScanner:
 		systemStrength = systems.temperature.strength
-	case resourcesScanner:
+	case sysResourcesScanner:
 		systemStrength = systems.resources.strength
-	case waterScanner:
+	case sysWaterScanner:
 		systemStrength = systems.water.strength
-	case landingSystem:
+	case sysLandingSystem:
 		systemStrength = systems.systemLanding
-	case constructionSystem:
+	case sysConstructionSystem:
 		systemStrength = systems.systemConstructors
-	case culturalDatabase:
+	case sysCulturalDatabase:
 		systemStrength = systems.systemCulturalDatabase
-	case scientificDatabase:
+	case sysScientificDatabase:
 		systemStrength = systems.systemScientificDatabase
-	case sleepChambers:
+	case sysSleepChambers:
 		systemStrength = systems.colonists
-	case surfaceProbes:
+	case sysSurfaceProbes:
 		systemStrength = systems.surfaceProbes
 	default:
 		log.Println("damage_system: Unexpected system", system)

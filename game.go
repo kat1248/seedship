@@ -4,10 +4,15 @@ import (
 	"fmt"
 )
 
-func gameLoop() {
+func gameLoop(count int) {
 	systems := newSystemState()
 	gameIntro()
-	for !done(systems) {
+	for i := 0; i < count; i++ {
+		if done(systems) {
+			break
+		}
+		visitedSystems++
+		nextEncounter(systems)
 		planet := generatePlanet(systems)
 		fmt.Println("planet =", planet)
 	}
@@ -18,11 +23,19 @@ func pause() {
 }
 
 func visited() int {
-	// FIXME, track number of times
-	return 1
+	return visitedSystems
 }
 
-func done(systems *systemState) bool {
+func nextEncounter(systems *SystemState) {
+	if visited() == 1 {
+		fmt.Println("The AI judges the first planet to be unsuitable. It turns its scanners away, spreads its solar sails, and begins another long journey through the void.")
+	}
+	encounter := selectNextEncounter(systems)
+	fmt.Println("Encounter =", encounter)
+	handleEncounter(encounter)
+}
+
+func done(systems *SystemState) bool {
 	/* If any six of the nine scanners/systems are destroyed, or if all the colonists are dead, game over */
 	if systems.colonists <= 0 {
 		// Space Game Over

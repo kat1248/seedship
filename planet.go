@@ -34,7 +34,7 @@ func (p Planet) String() string {
 	return s
 }
 
-func generatePlanet(systems *systemState) *Planet {
+func generatePlanet(systems *SystemState) *Planet {
 	planet := Planet{
 		name:            "fred",
 		temperature:     tmpModerate,
@@ -45,11 +45,11 @@ func generatePlanet(systems *systemState) *Planet {
 		nativeTechLevel: 0,
 	}
 	systems.surfaceProbeUsed = false
-	scannerAtmosphereSuccess := random(0, 99) < systems.atmosphere.strength
-	scannerGravitySuccess := random(0, 99) < systems.gravity.strength
-	scannerTemperatureSuccess := random(0, 99) < systems.temperature.strength
-	scannerResourcesSuccess := random(0, 99) < systems.resources.strength
-	scannerWaterSuccess := random(0, 99) < systems.water.strength
+	systems.atmosphere.success = random(0, 99) < systems.atmosphere.strength
+	systems.gravity.success = random(0, 99) < systems.gravity.strength
+	systems.temperature.success = random(0, 99) < systems.temperature.strength
+	systems.resources.success = random(0, 99) < systems.resources.strength
+	systems.water.success = random(0, 99) < systems.water.strength
 
 	greenChance := 2
 	yellowChance := 3
@@ -60,7 +60,7 @@ func generatePlanet(systems *systemState) *Planet {
 	/* ATMOSPHERE */
 	if visited() == 1 {
 		r = random(greenChance, greenChance+yellowChance+redChance-1)
-	} else if !scannerAtmosphereSuccess || systems.atmosphere.level == 0 || systems.offCourse {
+	} else if !systems.atmosphere.success || systems.atmosphere.level == 0 || systems.offCourse {
 		r = random(0, greenChance+yellowChance+redChance-1)
 	} else if systems.atmosphere.level == 1 {
 		r = random(0, greenChance+yellowChance-1)
@@ -81,7 +81,7 @@ func generatePlanet(systems *systemState) *Planet {
 	/* GRAVITY */
 	if visited() == 1 {
 		r = random(greenChance, greenChance+yellowChance+redChance-1)
-	} else if !scannerGravitySuccess || systems.gravity.level == 0 || systems.offCourse {
+	} else if !systems.gravity.success || systems.gravity.level == 0 || systems.offCourse {
 		r = random(0, greenChance+yellowChance+redChance-1)
 	} else if systems.gravity.level == 1 {
 		r = random(0, greenChance+yellowChance-1)
@@ -102,7 +102,7 @@ func generatePlanet(systems *systemState) *Planet {
 	/* TEMPERATURE */
 	if visited() == 1 {
 		r = random(greenChance, greenChance+yellowChance+redChance-1)
-	} else if !scannerTemperatureSuccess || systems.temperature.level == 0 || systems.offCourse {
+	} else if !systems.temperature.success || systems.temperature.level == 0 || systems.offCourse {
 		r = random(0, greenChance+yellowChance+redChance-1)
 	} else if systems.temperature.level == 1 {
 		r = random(0, greenChance+yellowChance-1)
@@ -123,7 +123,7 @@ func generatePlanet(systems *systemState) *Planet {
 	/* WATER */
 	if visited() == 1 {
 		r = random(greenChance, greenChance+yellowChance+redChance-1)
-	} else if !scannerWaterSuccess || systems.water.level == 0 || systems.offCourse {
+	} else if !systems.water.success || systems.water.level == 0 || systems.offCourse {
 		r = random(0, greenChance+yellowChance+redChance-1)
 	} else if systems.water.level == 1 {
 		r = random(0, greenChance+yellowChance-1)
@@ -144,7 +144,7 @@ func generatePlanet(systems *systemState) *Planet {
 	/* RESOURCES */
 	if visited() == 1 {
 		r = random(1, greenChance+yellowChance+redChance-1)
-	} else if !scannerResourcesSuccess || systems.resources.level == 0 || systems.offCourse {
+	} else if !systems.resources.success || systems.resources.level == 0 || systems.offCourse {
 		r = random(0, greenChance+yellowChance+redChance-1)
 	} else if systems.resources.level == 1 {
 		r = random(0, greenChance+yellowChance-1)

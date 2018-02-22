@@ -1,21 +1,20 @@
 package main
 
-import "fmt"
+import "flag"
 
 var (
-	newIntegrity int
+	count          int
+	newIntegrity   int
+	visitedSystems int
 )
 
 func init() {
+	flag.IntVar(&count, "count", 1, "number of planets to visit")
+	flag.Parse()
+
+	visitedSystems = 0
 }
 
 func main() {
-	systems := newSystemState()
-	//gameIntro()
-	if done(systems) {
-		fmt.Println("done")
-		return
-	}
-	planet := generatePlanet(systems)
-	fmt.Println("planet =", planet)
+	gameLoop(count)
 }
