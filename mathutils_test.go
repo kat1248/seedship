@@ -34,11 +34,11 @@ func TestRandom(t *testing.T) {
 	for i := 0; i < 1000; i++ {
 		x := random(20, 52)
 		if x < 20 {
-			t.Error("random out of range [20, 52], got %d", x)
+			t.Error("random out of range [20, 52], got", x)
 			return
 		}
 		if x > 52 {
-			t.Error("random out of range [20, 52], got %d", x)
+			t.Error("random out of range [20, 52], got", x)
 			return
 		}
 	}
