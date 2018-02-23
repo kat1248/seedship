@@ -31,6 +31,8 @@ func TestMin(t *testing.T) {
 }
 
 func TestRandom(t *testing.T) {
+	low := false
+	high := false
 	for i := 0; i < 1000; i++ {
 		x := random(20, 52)
 		if x < 20 {
@@ -41,5 +43,16 @@ func TestRandom(t *testing.T) {
 			t.Error("random out of range [20, 52], got", x)
 			return
 		}
+		if x == 20 {
+			low = true
+		} else if x == 52 {
+			high = true
+		}
+	}
+	if !low {
+		t.Error("random lower bound never met")
+	}
+	if !high {
+		t.Error("random higher bound never met")
 	}
 }

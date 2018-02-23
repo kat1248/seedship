@@ -181,7 +181,7 @@ func selectNextEncounter(systems *SystemState) Encounter {
 }
 
 func chooseEncounter(choices EncounterList) Encounter {
-	r := random(0, len(choices))
+	r := random(0, len(choices)-1)
 	return choices[r]
 }
 

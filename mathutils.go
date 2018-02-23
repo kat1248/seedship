@@ -26,8 +26,9 @@ func min(a, b int) int {
 	return b
 }
 
+// random returns an integer [min, max]
 func random(min, max int) int {
-	return min + rand.Intn(max-min)
+	return min + rand.Intn(max-min+1)
 }
 
 func randomDamageLow() int {
@@ -42,11 +43,11 @@ func randomDamageHigh() int {
 }
 
 func either(choices ...string) string {
-	r := random(0, len(choices))
+	r := random(0, len(choices)-1)
 	return choices[r]
 }
 
 func choose(choices ...interface{}) interface{} {
-	r := random(0, len(choices))
+	r := random(0, len(choices)-1)
 	return choices[r]
 }
