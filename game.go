@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 func gameLoop(count int) {
@@ -21,6 +22,7 @@ func gameLoop(count int) {
 
 func pause() {
 	// put logic to delay
+	time.Sleep(3 * time.Second)
 }
 
 func visited() int {
