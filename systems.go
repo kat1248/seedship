@@ -11,21 +11,21 @@ const (
 	maxScorePerPlanetAttribute = 500
 )
 
-/* ship systems type */
+// ShipSystem is a set of attributes for a ship
 type ShipSystem int
 
 const (
-	sysAtmosphereScanner  ShipSystem = iota
-	sysGravityScanner     ShipSystem = iota
-	sysTemperatureScanner ShipSystem = iota
-	sysResourcesScanner   ShipSystem = iota
-	sysWaterScanner       ShipSystem = iota
-	sysLandingSystem      ShipSystem = iota
-	sysConstructionSystem ShipSystem = iota
-	sysScientificDatabase ShipSystem = iota
-	sysCulturalDatabase   ShipSystem = iota
-	sysSurfaceProbes      ShipSystem = iota
-	sysSleepChambers      ShipSystem = iota
+	sysAtmosphereScanner ShipSystem = iota
+	sysGravityScanner
+	sysTemperatureScanner
+	sysResourcesScanner
+	sysWaterScanner
+	sysLandingSystem
+	sysConstructionSystem
+	sysScientificDatabase
+	sysCulturalDatabase
+	sysSurfaceProbes
+	sysSleepChambers
 )
 
 func (system ShipSystem) String() string {
@@ -92,12 +92,14 @@ func (system ShipSystem) String() string {
 
 */
 
+// Scanner is the data for one of the ships scanners
 type Scanner struct {
 	strength int
 	level    int
 	success  bool
 }
 
+// SystemState is a collection of the different subsystem states
 type SystemState struct {
 	atmosphere               Scanner
 	gravity                  Scanner

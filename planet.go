@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// Planet is the random elemets of a planet
 type Planet struct {
 	name            string
 	atmosphere      Atmosphere

@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 
+// Encounter is the id of a random encounter
 type Encounter int
 
 const (
@@ -32,8 +33,10 @@ const (
 	encScannerFailure
 )
 
+// EncounterList is a list of encounters
 type EncounterList []Encounter
 
+// EncounterCategory is which category an encounter is
 type EncounterCategory int
 
 const (
@@ -51,7 +54,7 @@ var (
 		encOverheating,
 	}
 
-	encountersUneventful = []Encounter{
+	encountersUneventfulBase = []Encounter{
 		encUneventful1,
 		encUneventful2,
 		encUneventful3,
@@ -70,7 +73,7 @@ var (
 		encRadiationBurst,
 	}
 
-	encountersRare = []Encounter{
+	encountersRareBase = []Encounter{
 		encRacistProgram,
 		encTrailingDrone,
 		encAlienSignal,
@@ -86,6 +89,8 @@ var (
 		encSystemFailure,
 		encScannerFailure,
 	}
+	encountersUneventful = encountersUneventfulBase
+	encountersRare       = encountersRareBase
 )
 
 func (encounter Encounter) String() string {
@@ -150,11 +155,9 @@ func selectNextEncounter(systems *SystemState) Encounter {
 			systems.lastEncounterCategory = catMalfunction
 		} else if r < 2 && len(encountersUneventful) > 0 && systems.lastEncounterCategory != catUneventful {
 			/* NOTHING INTERESTING HAPPENS - once each per playthrough */
-			/* FIXME - remove an uneventful event from list */
-			// r2 = random(0,(encountersUneventful.length)-1)
-			// encounter = encountersUneventful[_r2]
-			// encountersUneventful.splice(_r2,1)
-			encounter = chooseEncounter(encountersMalfunction)
+			r2 := random(0, len(encountersUneventful)-1)
+			encounter = encountersUneventful[r2]
+			encountersUneventful = append(encountersUneventful[:r2], encountersUneventful[r2+1:]...)
 			systems.lastEncounterCategory = catUneventful
 		} else if visited() < 3 {
 			/* FIRST TWO EVENTS */
@@ -162,11 +165,9 @@ func selectNextEncounter(systems *SystemState) Encounter {
 			systems.lastEncounterCategory = catCommon
 		} else if r == 9 && len(encountersRare) > 0 && systems.lastEncounterCategory != catRare {
 			/* RARE EVENTS - once each per playthrough */
-			/* FIXME - remove rare event from list */
-			// r2 = random(0,(encountersRare.length)-1)>>
-			// encounter = encountersRare[_r2]>>
-			// encountersRare.splice(_r2,1)>>
-			encounter = chooseEncounter(encountersRare)
+			r2 := random(0, len(encountersRare)-1)
+			encounter = encountersRare[r2]
+			encountersRare = append(encountersRare[:r2], encountersRare[r2+1:]...)
 			systems.lastEncounterCategory = catRare
 		} else {
 			/* COMMON EVENTS */
