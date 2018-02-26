@@ -3,7 +3,7 @@ package main
 type Atmosphere int
 
 const (
-	atmBreathable Atmosphere = iota
+	atmBreathable Atmosphere = iota + 1
 	atmMarginal
 	atmCorrosive
 	atmToxic
@@ -13,6 +13,7 @@ const (
 
 func (atmosphere Atmosphere) String() string {
 	atmospheres := [...]string{
+		"uninitialized",
 		"Breathable",
 		"Marginal",
 		"Corrosive",
@@ -29,7 +30,7 @@ func (atmosphere Atmosphere) String() string {
 type Gravity int
 
 const (
-	grvVeryLow Gravity = iota
+	grvVeryLow Gravity = iota + 1
 	grvLow
 	grvModerate
 	grvHigh
@@ -38,6 +39,7 @@ const (
 
 func (gravity Gravity) String() string {
 	gravities := [...]string{
+		"uninitialized",
 		"Very low",
 		"Low",
 		"Moderate",
@@ -53,7 +55,7 @@ func (gravity Gravity) String() string {
 type Temperature int
 
 const (
-	tmpVeryCold Temperature = iota
+	tmpVeryCold Temperature = iota + 1
 	tmpCold
 	tmpModerate
 	tmpHot
@@ -62,6 +64,7 @@ const (
 
 func (temperature Temperature) String() string {
 	temperatures := [...]string{
+		"uninitialized",
 		"Very cold",
 		"Cold",
 		"Moderate",
@@ -77,7 +80,7 @@ func (temperature Temperature) String() string {
 type Water int
 
 const (
-	wtrNone Water = iota
+	wtrNone Water = iota + 1
 	wtrTrace
 	wtrOceans
 	wtrPlanetWideOcean
@@ -87,6 +90,7 @@ const (
 
 func (water Water) String() string {
 	waters := [...]string{
+		"uninitialized",
 		"None",
 		"Trace",
 		"Oceans",
@@ -103,13 +107,14 @@ func (water Water) String() string {
 type Resources int
 
 const (
-	rscNone Resources = iota
+	rscNone Resources = iota + 1
 	rscPoor
 	rscRich
 )
 
 func (resource Resources) String() string {
 	resources := [...]string{
+		"uninitialized",
 		"None",
 		"Poor",
 		"Rich",
@@ -125,7 +130,7 @@ type SurfaceFeature int
 type SurfaceFeatureList []SurfaceFeature
 
 const (
-	sfBarrenMoon SurfaceFeature = iota
+	sfBarrenMoon SurfaceFeature = iota + 1
 	sfMetalRichMoon
 	sfUnstableMoon
 	sfOutstandingBeauty
@@ -148,6 +153,7 @@ const (
 
 func (feature SurfaceFeature) String() string {
 	features := [...]string{
+		"uninitialized",
 		"Barren moon",
 		"Metal-rich moon",
 		"Unstable moon",
@@ -201,7 +207,7 @@ type Anomaly int
 type AnomalyList []Anomaly
 
 const (
-	anMoon Anomaly = iota
+	anMoon Anomaly = iota + 1
 	anGeologicalAnomaly
 	anVegetation
 	anAnimalLife
@@ -211,6 +217,7 @@ const (
 
 func (anomaly Anomaly) String() string {
 	anomalies := [...]string{
+		"uninitialized",
 		"Moon",
 		"Geological anomalies",
 		"Vegetation",

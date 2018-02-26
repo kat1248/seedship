@@ -5,9 +5,11 @@ import (
 	"time"
 )
 
-func gameLoop(count int) {
+func gameLoop(count int, skip bool) {
 	systems := newSystemState()
-	gameIntro()
+	if !skip {
+		gameIntro()
+	}
 	for i := 0; i < count; i++ {
 		if done(systems) {
 			break
