@@ -7,11 +7,11 @@ import (
 // Planet is the random elemets of a planet
 type Planet struct {
 	name            string
-	atmosphere      Atmosphere
-	gravity         Gravity
 	temperature     Temperature
-	water           Water
+	gravity         Gravity
 	resources       Resources
+	atmosphere      Atmosphere
+	water           Water
 	nativeTechLevel int
 	anomalies       AnomalyList
 	surfaceFeatures SurfaceFeatureList
