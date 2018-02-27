@@ -2,8 +2,8 @@ package main
 
 import "fmt"
 
-// Encounter is the id of a random encounter
-type Encounter int
+// encounterType is the id of a random encounter
+type encounterType int
 
 const (
 	encNone = iota
@@ -33,28 +33,28 @@ const (
 	encScannerFailure
 )
 
-// EncounterList is a list of encounters
-type EncounterList []Encounter
+// encounterList is a list of encounters
+type encounterList []encounterType
 
-// EncounterCategory is which category an encounter is
-type EncounterCategory int
+// encounterCategory is which category an encounter is
+type encounterCategory int
 
 const (
-	catCommon EncounterCategory = iota
+	catCommon encounterCategory = iota
 	catUneventful
 	catRare
 	catMalfunction
 )
 
 var (
-	encountersFirstTwo = []Encounter{
+	encountersFirstTwo = []encounterType{
 		encImpactChoice,
 		encCometChoice,
 		encMicrometeorite,
 		encOverheating,
 	}
 
-	encountersUneventfulBase = []Encounter{
+	encountersUneventfulBase = []encounterType{
 		encUneventful1,
 		encUneventful2,
 		encUneventful3,
@@ -62,7 +62,7 @@ var (
 		encUneventful5,
 	}
 
-	encountersCommon = []Encounter{
+	encountersCommon = []encounterType{
 		encImpactChoice,
 		encCometChoice,
 		encMicrometeorite,
@@ -73,7 +73,7 @@ var (
 		encRadiationBurst,
 	}
 
-	encountersRareBase = []Encounter{
+	encountersRareBase = []encounterType{
 		encRacistProgram,
 		encTrailingDrone,
 		encAlienSignal,
@@ -82,7 +82,7 @@ var (
 		encReadDatabase,
 	}
 
-	encountersMalfunction = []Encounter{
+	encountersMalfunction = []encounterType{
 		encProbeMalfunction,
 		encComputerFailure,
 		encStasisFailure,
@@ -93,7 +93,7 @@ var (
 	encountersRare       = encountersRareBase
 )
 
-func (encounter Encounter) String() string {
+func (encounter encounterType) String() string {
 	encounters := [...]string{
 		"None",
 		"Impact Choice",
@@ -127,7 +127,7 @@ func (encounter Encounter) String() string {
 	return encounters[encounter]
 }
 
-func (category EncounterCategory) String() string {
+func (category encounterCategory) String() string {
 	categories := [...]string{
 		"Common",
 		"Uneventful",
@@ -140,7 +140,7 @@ func (category EncounterCategory) String() string {
 	return categories[category]
 }
 
-func selectNextEncounter(systems *SystemState) Encounter {
+func selectNextEncounter(systems *SystemState) encounterType {
 	// Initial: 2/10 uneventful, 7/10 common, 1/10 rare
 	// Final: 5/10 malfunction, 4/10 common, 1/10 rare
 
@@ -180,11 +180,11 @@ func selectNextEncounter(systems *SystemState) Encounter {
 	return encounter
 }
 
-func chooseEncounter(choices EncounterList) Encounter {
+func chooseEncounter(choices encounterList) encounterType {
 	r := random(0, len(choices)-1)
 	return choices[r]
 }
 
-func handleEncounter(encounter Encounter) {
+func handleEncounter(encounter encounterType) {
 	fmt.Println("*** handling", encounter, "***")
 }

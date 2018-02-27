@@ -17,8 +17,11 @@ func gameLoop(count int, skip bool) {
 		visitedSystems++
 		nextEncounter(systems)
 		planet := generatePlanet(systems)
+		// [[Orbit planet]]
 		fmt.Println("planet #", visited())
 		fmt.Println(planet)
+		s := describe(systems, planet)
+		fmt.Print(s)
 	}
 }
 

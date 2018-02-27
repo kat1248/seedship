@@ -47,6 +47,11 @@ func either(choices ...string) string {
 	return choices[r]
 }
 
+func pickOne(choices []string) string {
+	r := random(0, len(choices)-1)
+	return choices[r]
+}
+
 func choose(choices ...interface{}) interface{} {
 	r := random(0, len(choices)-1)
 	return choices[r]

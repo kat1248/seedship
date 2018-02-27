@@ -1,9 +1,9 @@
 package main
 
-type Atmosphere int
+type atmosphereType int
 
 const (
-	atmBreathable Atmosphere = iota + 1
+	atmBreathable atmosphereType = iota + 1
 	atmMarginal
 	atmCorrosive
 	atmToxic
@@ -11,7 +11,7 @@ const (
 	atmNone
 )
 
-func (atmosphere Atmosphere) String() string {
+func (atmosphere atmosphereType) String() string {
 	atmospheres := [...]string{
 		"uninitialized",
 		"Breathable",
@@ -27,17 +27,17 @@ func (atmosphere Atmosphere) String() string {
 	return atmospheres[atmosphere]
 }
 
-type Gravity int
+type gravityType int
 
 const (
-	grvVeryLow Gravity = iota + 1
+	grvVeryLow gravityType = iota + 1
 	grvLow
 	grvModerate
 	grvHigh
 	grvVeryHigh
 )
 
-func (gravity Gravity) String() string {
+func (gravity gravityType) String() string {
 	gravities := [...]string{
 		"uninitialized",
 		"Very low",
@@ -52,17 +52,17 @@ func (gravity Gravity) String() string {
 	return gravities[gravity]
 }
 
-type Temperature int
+type temperatureType int
 
 const (
-	tmpVeryCold Temperature = iota + 1
+	tmpVeryCold temperatureType = iota + 1
 	tmpCold
 	tmpModerate
 	tmpHot
 	tmpVeryHot
 )
 
-func (temperature Temperature) String() string {
+func (temperature temperatureType) String() string {
 	temperatures := [...]string{
 		"uninitialized",
 		"Very cold",
@@ -77,10 +77,10 @@ func (temperature Temperature) String() string {
 	return temperatures[temperature]
 }
 
-type Water int
+type waterType int
 
 const (
-	wtrNone Water = iota + 1
+	wtrNone waterType = iota + 1
 	wtrTrace
 	wtrOceans
 	wtrPlanetWideOcean
@@ -88,7 +88,7 @@ const (
 	wtrIceCaps
 )
 
-func (water Water) String() string {
+func (water waterType) String() string {
 	waters := [...]string{
 		"uninitialized",
 		"None",
@@ -104,15 +104,15 @@ func (water Water) String() string {
 	return waters[water]
 }
 
-type Resources int
+type resourcesType int
 
 const (
-	rscNone Resources = iota + 1
+	rscNone resourcesType = iota + 1
 	rscPoor
 	rscRich
 )
 
-func (resource Resources) String() string {
+func (resource resourcesType) String() string {
 	resources := [...]string{
 		"uninitialized",
 		"None",
@@ -125,12 +125,12 @@ func (resource Resources) String() string {
 	return resources[resource]
 }
 
-type SurfaceFeature int
+type surfaceFeatureType int
 
-type SurfaceFeatureList []SurfaceFeature
+type surfaceFeatureList []surfaceFeatureType
 
 const (
-	sfBarrenMoon SurfaceFeature = iota + 1
+	sfBarrenMoon surfaceFeatureType = iota + 1
 	sfMetalRichMoon
 	sfUnstableMoon
 	sfOutstandingBeauty
@@ -151,7 +151,7 @@ const (
 	sfRegularGeologicalFormations
 )
 
-func (feature SurfaceFeature) String() string {
+func (feature surfaceFeatureType) String() string {
 	features := [...]string{
 		"uninitialized",
 		"Barren moon",
@@ -180,7 +180,7 @@ func (feature SurfaceFeature) String() string {
 	return features[feature]
 }
 
-func (features SurfaceFeatureList) String() string {
+func (features surfaceFeatureList) String() string {
 	s := ""
 	first := true
 	for _, v := range features {
@@ -193,7 +193,7 @@ func (features SurfaceFeatureList) String() string {
 	return s
 }
 
-func featureInList(a SurfaceFeature, list SurfaceFeatureList) bool {
+func featureInList(a surfaceFeatureType, list surfaceFeatureList) bool {
 	for _, b := range list {
 		if b == a {
 			return true
@@ -202,12 +202,12 @@ func featureInList(a SurfaceFeature, list SurfaceFeatureList) bool {
 	return false
 }
 
-type Anomaly int
+type anomalyType int
 
-type AnomalyList []Anomaly
+type anomalyList []anomalyType
 
 const (
-	anMoon Anomaly = iota + 1
+	anMoon anomalyType = iota + 1
 	anGeologicalAnomaly
 	anVegetation
 	anAnimalLife
@@ -215,7 +215,7 @@ const (
 	anElectromagneticActivity
 )
 
-func (anomaly Anomaly) String() string {
+func (anomaly anomalyType) String() string {
 	anomalies := [...]string{
 		"uninitialized",
 		"Moon",
@@ -231,7 +231,7 @@ func (anomaly Anomaly) String() string {
 	return anomalies[anomaly]
 }
 
-func (anomalies AnomalyList) String() string {
+func (anomalies anomalyList) String() string {
 	s := ""
 	first := true
 	for _, v := range anomalies {
@@ -244,7 +244,7 @@ func (anomalies AnomalyList) String() string {
 	return s
 }
 
-func anomalyInList(a Anomaly, list AnomalyList) bool {
+func anomalyInList(a anomalyType, list anomalyList) bool {
 	for _, b := range list {
 		if b == a {
 			return true

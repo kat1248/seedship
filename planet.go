@@ -1,49 +1,60 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"html/template"
 )
 
 // Planet is the random elemets of a planet
 type Planet struct {
-	name            string
-	temperature     Temperature
-	gravity         Gravity
-	resources       Resources
-	atmosphere      Atmosphere
-	water           Water
-	nativeTechLevel int
-	anomalies       AnomalyList
-	surfaceFeatures SurfaceFeatureList
+	Name            string
+	Temperature     temperatureType
+	Gravity         gravityType
+	Resources       resourcesType
+	Atmosphere      atmosphereType
+	Water           waterType
+	NativeTechLevel int
+	Anomalies       anomalyList
+	SurfaceFeatures surfaceFeatureList
 }
 
+const planetTemplate = `{{.Name}}
+temperature: {{.Temperature}}
+gravity: {{.Gravity}}
+resources: {{.Resources}}
+atmosphere: {{.Atmosphere}}
+water: {{.Water}}
+natives: {{.NativeTechLevel}}{{if .Anomalies}}
+anomalies: {{.Anomalies}}{{end}}{{if .SurfaceFeatures}}
+surface features: {{.SurfaceFeatures}}{{end}}`
+
 func (p Planet) String() string {
-	s := p.name + "\n" +
-		"temperature: " + p.temperature.String() + "\n" +
-		"gravity: " + p.gravity.String() + "\n" +
-		"resources: " + p.resources.String() + "\n" +
-		"atmosphere: " + p.atmosphere.String() + "\n" +
-		"water: " + p.water.String() + "\n" +
-		"natives: " + fmt.Sprint(p.nativeTechLevel)
-	if len(p.anomalies) > 0 {
-		s += "\n" + "anomalies: " + p.anomalies.String()
-	}
-	if len(p.surfaceFeatures) > 0 {
-		s += "\n" + "surface features: " + p.surfaceFeatures.String()
+	tmpl := template.New("planet")
+	tmpl, err := tmpl.Parse(planetTemplate)
+	if err != nil {
+		fmt.Println(err)
+		return ""
 	}
 
-	return s
+	var tpl bytes.Buffer
+	if err = tmpl.Execute(&tpl, p); err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	return tpl.String()
 }
 
 func generatePlanet(systems *SystemState) *Planet {
 	planet := Planet{
-		name:            "fred",
-		temperature:     tmpModerate,
-		gravity:         grvModerate,
-		resources:       rscNone,
-		atmosphere:      atmNone,
-		water:           wtrNone,
-		nativeTechLevel: 0,
+		Name:            "fred",
+		Temperature:     tmpModerate,
+		Gravity:         grvModerate,
+		Resources:       rscNone,
+		Atmosphere:      atmNone,
+		Water:           wtrNone,
+		NativeTechLevel: 0,
 	}
 	systems.surfaceProbeUsed = false
 	systems.atmosphere.success = random(0, 99) < systems.atmosphere.strength
@@ -72,11 +83,11 @@ func generatePlanet(systems *SystemState) *Planet {
 	}
 
 	if r < greenChance {
-		planet.atmosphere = atmBreathable
+		planet.Atmosphere = atmBreathable
 	} else if r < greenChance+yellowChance {
-		planet.atmosphere = atmMarginal
+		planet.Atmosphere = atmMarginal
 	} else {
-		planet.atmosphere = choose(atmCorrosive, atmToxic, atmNonBreathable, atmNone).(Atmosphere)
+		planet.Atmosphere = choose(atmCorrosive, atmToxic, atmNonBreathable, atmNone).(atmosphereType)
 	}
 
 	/* GRAVITY */
@@ -93,11 +104,11 @@ func generatePlanet(systems *SystemState) *Planet {
 	}
 
 	if r < greenChance {
-		planet.gravity = grvModerate
+		planet.Gravity = grvModerate
 	} else if r < greenChance+yellowChance {
-		planet.gravity = choose(grvLow, grvHigh).(Gravity)
+		planet.Gravity = choose(grvLow, grvHigh).(gravityType)
 	} else {
-		planet.gravity = choose(grvVeryLow, grvVeryHigh).(Gravity)
+		planet.Gravity = choose(grvVeryLow, grvVeryHigh).(gravityType)
 	}
 
 	/* TEMPERATURE */
@@ -114,11 +125,11 @@ func generatePlanet(systems *SystemState) *Planet {
 	}
 
 	if r < greenChance {
-		planet.temperature = tmpModerate
+		planet.Temperature = tmpModerate
 	} else if r < greenChance+yellowChance {
-		planet.temperature = choose(tmpCold, tmpHot).(Temperature)
+		planet.Temperature = choose(tmpCold, tmpHot).(temperatureType)
 	} else {
-		planet.temperature = choose(tmpVeryCold, tmpVeryHot).(Temperature)
+		planet.Temperature = choose(tmpVeryCold, tmpVeryHot).(temperatureType)
 	}
 
 	/* WATER */
@@ -135,11 +146,11 @@ func generatePlanet(systems *SystemState) *Planet {
 	}
 
 	if r < greenChance {
-		planet.water = wtrOceans
+		planet.Water = wtrOceans
 	} else if r < greenChance+yellowChance {
-		planet.water = wtrPlanetWideOcean
+		planet.Water = wtrPlanetWideOcean
 	} else {
-		planet.water = choose(wtrTrace, wtrNone).(Water)
+		planet.Water = choose(wtrTrace, wtrNone).(waterType)
 	}
 
 	/* RESOURCES */
@@ -156,36 +167,36 @@ func generatePlanet(systems *SystemState) *Planet {
 	}
 
 	if r < greenChance {
-		planet.resources = rscRich
+		planet.Resources = rscRich
 	} else if r < greenChance+yellowChance {
-		planet.resources = rscPoor
+		planet.Resources = rscPoor
 	} else {
-		planet.resources = rscNone
+		planet.Resources = rscNone
 	}
 
 	/* Freeze the oceans at low temperatures */
-	if planet.temperature == tmpVeryCold || (planet.temperature == tmpCold && random(0, 1) == 0) {
-		if planet.water == wtrOceans {
-			planet.water = wtrIceCaps
-		} else if planet.water == wtrPlanetWideOcean {
-			planet.water = wtrIceCoveredSurface
+	if planet.Temperature == tmpVeryCold || (planet.Temperature == tmpCold && random(0, 1) == 0) {
+		if planet.Water == wtrOceans {
+			planet.Water = wtrIceCaps
+		} else if planet.Water == wtrPlanetWideOcean {
+			planet.Water = wtrIceCoveredSurface
 		}
 	}
 
 	/* No liquid water without atmosphere */
-	if (planet.water == wtrOceans || planet.water == wtrPlanetWideOcean) && planet.atmosphere == atmNone {
-		planet.atmosphere = atmNonBreathable
+	if (planet.Water == wtrOceans || planet.Water == wtrPlanetWideOcean) && planet.Atmosphere == atmNone {
+		planet.Atmosphere = atmNonBreathable
 	}
 
 	/* SURFACE FEATURES */
-	planet.surfaceFeatures = []SurfaceFeature{}
-	planet.anomalies = []Anomaly{}
+	planet.SurfaceFeatures = []surfaceFeatureType{}
+	planet.Anomalies = []anomalyType{}
 
 	/* Moon - affects technology result */
 	/* Moon is first, because the surface probe investigates it before landing on the planet itself */
 	/* The higher the planet's gravity, the more likely it is to have a moon */
 	moonChance := 0
-	switch planet.gravity {
+	switch planet.Gravity {
 	case grvVeryLow:
 		moonChance = 10
 	case grvLow:
@@ -199,21 +210,21 @@ func generatePlanet(systems *SystemState) *Planet {
 	}
 
 	if random(0, 99) < moonChance {
-		planet.surfaceFeatures = append(planet.surfaceFeatures, choose(sfBarrenMoon, sfMetalRichMoon, sfUnstableMoon).(SurfaceFeature))
-		planet.anomalies = append(planet.anomalies, anMoon)
+		planet.SurfaceFeatures = append(planet.SurfaceFeatures, choose(sfBarrenMoon, sfMetalRichMoon, sfUnstableMoon).(surfaceFeatureType))
+		planet.Anomalies = append(planet.Anomalies, anMoon)
 	}
 
 	/* Aesthetics - affect culture result */
 	/* Flat 20% chance of one or the other */
 	if random(0, 4) == 0 {
-		planet.surfaceFeatures = append(planet.surfaceFeatures, choose(sfOutstandingBeauty, sfOutstandingUgliness).(SurfaceFeature))
+		planet.SurfaceFeatures = append(planet.SurfaceFeatures, choose(sfOutstandingBeauty, sfOutstandingUgliness).(surfaceFeatureType))
 	}
 
 	/* Caves? */
 	/* No caves if surface is covered entirely in water or ice. Otherwise chance of caves is based on gravity. */
 	cavesChance := 0
-	if planet.water != wtrPlanetWideOcean && planet.water != wtrIceCoveredSurface {
-		switch planet.gravity {
+	if planet.Water != wtrPlanetWideOcean && planet.Water != wtrIceCoveredSurface {
+		switch planet.Gravity {
 		case grvVeryLow:
 			cavesChance = 50
 		case grvLow:
@@ -227,16 +238,16 @@ func generatePlanet(systems *SystemState) *Planet {
 		}
 		if random(0, 99) < cavesChance {
 			if random(0, 2) == 0 {
-				planet.surfaceFeatures = append(planet.surfaceFeatures, sfAirtightCaves)
+				planet.SurfaceFeatures = append(planet.SurfaceFeatures, sfAirtightCaves)
 			}
 			if random(0, 2) == 0 {
-				planet.surfaceFeatures = append(planet.surfaceFeatures, sfInsulatedCaves)
+				planet.SurfaceFeatures = append(planet.SurfaceFeatures, sfInsulatedCaves)
 			}
-			if !featureInList(sfAirtightCaves, planet.surfaceFeatures) &&
-				!featureInList(sfInsulatedCaves, planet.surfaceFeatures) {
-				planet.surfaceFeatures = append(planet.surfaceFeatures, sfUnstableGeology)
+			if !featureInList(sfAirtightCaves, planet.SurfaceFeatures) &&
+				!featureInList(sfInsulatedCaves, planet.SurfaceFeatures) {
+				planet.SurfaceFeatures = append(planet.SurfaceFeatures, sfUnstableGeology)
 			}
-			planet.anomalies = append(planet.anomalies, anGeologicalAnomaly)
+			planet.Anomalies = append(planet.Anomalies, anGeologicalAnomaly)
 		}
 	}
 
@@ -244,7 +255,7 @@ func generatePlanet(systems *SystemState) *Planet {
 	/* Plant life? */
 	plantsChance := 0
 	if true {
-		switch planet.atmosphere {
+		switch planet.Atmosphere {
 		case atmBreathable:
 			plantsChance = 100
 		case atmMarginal:
@@ -259,48 +270,48 @@ func generatePlanet(systems *SystemState) *Planet {
 			plantsChance = 5
 		}
 		if random(0, 99) < plantsChance {
-			planet.surfaceFeatures = append(planet.surfaceFeatures, choose(sfPlantLife, sfEdiblePlants, sfPoisonousPlants).(SurfaceFeature))
-			planet.anomalies = append(planet.anomalies, anVegetation)
+			planet.SurfaceFeatures = append(planet.SurfaceFeatures, choose(sfPlantLife, sfEdiblePlants, sfPoisonousPlants).(surfaceFeatureType))
+			planet.Anomalies = append(planet.Anomalies, anVegetation)
 		}
 	}
 	animalsChance := 0
 	/* If plants, possibly animals */
-	if featureInList(sfPlantLife, planet.surfaceFeatures) ||
-		featureInList(sfEdiblePlants, planet.surfaceFeatures) ||
-		featureInList(sfPoisonousPlants, planet.surfaceFeatures) {
+	if featureInList(sfPlantLife, planet.SurfaceFeatures) ||
+		featureInList(sfEdiblePlants, planet.SurfaceFeatures) ||
+		featureInList(sfPoisonousPlants, planet.SurfaceFeatures) {
 		animalsChance = 50
 		if random(0, 99) < animalsChance {
-			planet.surfaceFeatures = append(planet.surfaceFeatures, choose(sfAnimalLife, sfUsefulAnimals, sfDangerousAnimals).(SurfaceFeature))
-			planet.anomalies = append(planet.anomalies, anAnimalLife)
+			planet.SurfaceFeatures = append(planet.SurfaceFeatures, choose(sfAnimalLife, sfUsefulAnimals, sfDangerousAnimals).(surfaceFeatureType))
+			planet.Anomalies = append(planet.Anomalies, anAnimalLife)
 		}
 	}
 
-	planet.nativeTechLevel = 0
+	planet.NativeTechLevel = 0
 	sentientsChance := 0
 	/* If animals, possibly sentient life */
-	if featureInList(sfAnimalLife, planet.surfaceFeatures) ||
-		featureInList(sfUsefulAnimals, planet.surfaceFeatures) ||
-		featureInList(sfDangerousAnimals, planet.surfaceFeatures) {
+	if featureInList(sfAnimalLife, planet.SurfaceFeatures) ||
+		featureInList(sfUsefulAnimals, planet.SurfaceFeatures) ||
+		featureInList(sfDangerousAnimals, planet.SurfaceFeatures) {
 		sentientsChance = 50
 		if random(0, 99) < sentientsChance {
-			planet.surfaceFeatures = append(planet.surfaceFeatures, sfIntelligentLife)
+			planet.SurfaceFeatures = append(planet.SurfaceFeatures, sfIntelligentLife)
 			/* Max tech level is determined by resources */
-			if planet.resources == rscRich {
-				planet.nativeTechLevel = random(0, 10)
-			} else if planet.resources == rscPoor {
-				planet.nativeTechLevel = random(0, 6)
-			} else if planet.resources == rscNone {
-				planet.nativeTechLevel = random(0, 4)
+			if planet.Resources == rscRich {
+				planet.NativeTechLevel = random(0, 10)
+			} else if planet.Resources == rscPoor {
+				planet.NativeTechLevel = random(0, 6)
+			} else if planet.Resources == rscNone {
+				planet.NativeTechLevel = random(0, 4)
 			} else {
-				fmt.Println("Unexpected resources value", planet.resources)
+				fmt.Println("Unexpected resources value", planet.Resources)
 			}
-			if planet.nativeTechLevel >= 3 {
+			if planet.NativeTechLevel >= 3 {
 				/* Neolithic or higher */
-				planet.anomalies = append(planet.anomalies, anPossibleStructures)
+				planet.Anomalies = append(planet.Anomalies, anPossibleStructures)
 			}
-			if planet.nativeTechLevel >= 8 {
+			if planet.NativeTechLevel >= 8 {
 				/* Atomic or higher */
-				planet.anomalies = append(planet.anomalies, anElectromagneticActivity)
+				planet.Anomalies = append(planet.Anomalies, anElectromagneticActivity)
 			}
 		}
 	}
@@ -312,34 +323,235 @@ func generatePlanet(systems *SystemState) *Planet {
 	/* To do: alter ruins chance depending on existing factors */
 	ruinsChance := 10
 	if random(0, 99) < ruinsChance {
-		planet.surfaceFeatures = append(planet.surfaceFeatures, sfMonumentalRuins)
-		if !anomalyInList(anPossibleStructures, planet.anomalies) {
-			planet.anomalies = append(planet.anomalies, anPossibleStructures)
+		planet.SurfaceFeatures = append(planet.SurfaceFeatures, sfMonumentalRuins)
+		if !anomalyInList(anPossibleStructures, planet.Anomalies) {
+			planet.Anomalies = append(planet.Anomalies, anPossibleStructures)
 		}
 	}
 	if random(0, 99) < ruinsChance {
-		planet.surfaceFeatures = append(planet.surfaceFeatures, sfHighTechRuins)
-		if !anomalyInList(anPossibleStructures, planet.anomalies) {
-			planet.anomalies = append(planet.anomalies, anPossibleStructures)
+		planet.SurfaceFeatures = append(planet.SurfaceFeatures, sfHighTechRuins)
+		if !anomalyInList(anPossibleStructures, planet.Anomalies) {
+			planet.Anomalies = append(planet.Anomalies, anPossibleStructures)
 		}
 	}
 	if random(0, 99) < ruinsChance {
-		planet.surfaceFeatures = append(planet.surfaceFeatures, sfDangerousRuins)
-		if !anomalyInList(anPossibleStructures, planet.anomalies) {
-			planet.anomalies = append(planet.anomalies, anPossibleStructures)
+		planet.SurfaceFeatures = append(planet.SurfaceFeatures, sfDangerousRuins)
+		if !anomalyInList(anPossibleStructures, planet.Anomalies) {
+			planet.Anomalies = append(planet.Anomalies, anPossibleStructures)
 		}
 	}
 	if random(0, 99) < ruinsChance &&
-		!featureInList(sfMonumentalRuins, planet.surfaceFeatures) &&
-		!featureInList(sfHighTechRuins, planet.surfaceFeatures) &&
-		!featureInList(sfDangerousRuins, planet.surfaceFeatures) {
-		planet.surfaceFeatures = append(planet.surfaceFeatures, sfRegularGeologicalFormations)
-		if !anomalyInList(anPossibleStructures, planet.anomalies) {
-			planet.anomalies = append(planet.anomalies, anPossibleStructures)
+		!featureInList(sfMonumentalRuins, planet.SurfaceFeatures) &&
+		!featureInList(sfHighTechRuins, planet.SurfaceFeatures) &&
+		!featureInList(sfDangerousRuins, planet.SurfaceFeatures) {
+		planet.SurfaceFeatures = append(planet.SurfaceFeatures, sfRegularGeologicalFormations)
+		if !anomalyInList(anPossibleStructures, planet.Anomalies) {
+			planet.Anomalies = append(planet.Anomalies, anPossibleStructures)
 		}
 	}
 
-	// [[Orbit planet]]
+	name(&planet)
 
 	return &planet
+}
+
+func name(p *Planet) {
+	backupNames := []string{}
+	possibleNames := []string{}
+
+	backupNames = append(backupNames, "This World")
+
+	if p.Atmosphere == atmBreathable &&
+		p.Temperature == tmpModerate &&
+		p.Gravity == grvModerate &&
+		p.Water == wtrOceans &&
+		p.Resources == rscRich {
+		possibleNames = append(possibleNames, "Eden")
+		possibleNames = append(possibleNames, "Paradise")
+		possibleNames = append(possibleNames, "Terra Nova")
+		possibleNames = append(possibleNames, "New Earth")
+	} else {
+		switch p.Temperature {
+		case tmpVeryHot:
+			possibleNames = append(possibleNames, "Inferno")
+		case tmpHot:
+			backupNames = append(backupNames, "Inferno")
+		case tmpVeryCold:
+			possibleNames = append(possibleNames, "Arctica")
+		case tmpCold:
+			backupNames = append(backupNames, "Arctica")
+		}
+
+		if p.Water != wtrPlanetWideOcean {
+			switch p.Gravity {
+			case grvVeryHigh:
+				possibleNames = append(possibleNames, "Cueball")
+			case grvHigh:
+				backupNames = append(backupNames, "Cueball")
+			case grvVeryLow:
+				possibleNames = append(possibleNames, "Crag")
+			case grvLow:
+				backupNames = append(backupNames, "Crag")
+			}
+		}
+
+		switch p.Water {
+		case wtrPlanetWideOcean:
+			possibleNames = append(possibleNames, "Atlantis")
+			possibleNames = append(possibleNames, "Oceanus")
+		case wtrIceCoveredSurface:
+			possibleNames = append(possibleNames, "Snowball")
+			possibleNames = append(possibleNames, "Iceball")
+		case wtrTrace, wtrNone:
+			possibleNames = append(possibleNames, "Arid")
+			possibleNames = append(possibleNames, "Desert")
+		}
+
+		if p.Resources == rscRich {
+			possibleNames = append(possibleNames, "Bounty")
+			possibleNames = append(possibleNames, "El Dorado")
+		}
+
+		if featureInList(sfPlantLife, p.SurfaceFeatures) ||
+			featureInList(sfEdiblePlants, p.SurfaceFeatures) ||
+			featureInList(sfPoisonousPlants, p.SurfaceFeatures) {
+			possibleNames = append(possibleNames, "Garden")
+			possibleNames = append(possibleNames, "Arcadia")
+		}
+
+		if featureInList(sfAirtightCaves, p.SurfaceFeatures) ||
+			featureInList(sfInsulatedCaves, p.SurfaceFeatures) {
+			possibleNames = append(possibleNames, "Warren")
+			possibleNames = append(possibleNames, "Honeycomb")
+		}
+	}
+
+	/* Pick a name */
+	if len(possibleNames) == 0 {
+		possibleNames = backupNames
+	}
+
+	p.Name = pickOne(possibleNames)
+}
+
+func describe(state *SystemState, p *Planet) string {
+	/* Now the first impression text */
+	s := ""
+	if state.colonists >= maxColonists {
+		s += "The colonists"
+	} else if state.colonists >= maxColonists/2 {
+		s += "The surviving colonists"
+	} else if state.colonists >= 0 {
+		s += "The few surviving colonists"
+	}
+
+	s += " wake from their sleep chambers and survey their new home.\n"
+
+	/* Landscape */
+	if p.Water == wtrPlanetWideOcean {
+		switch p.Gravity {
+		case grvVeryLow:
+			s += "The seedship tosses on an ocean of slow, kilometres-high waves, beneath"
+		case grvLow:
+			s += "The seedship rocks on the surface of an ocean of slow, tall waves, beneath"
+		case grvModerate:
+			s += "The ship floats on the surface of an ocean that stretches to the horizon"
+		case grvHigh:
+			s += "The ship floats on the surface of a calm ocean that stretches to the horizon"
+		case grvVeryHigh:
+			s += "The ship rests on the surface of a mirror-flat ocean beneath"
+		default:
+			fmt.Println("error: Unexpected gravity value $gravity.")
+		}
+	} else if featureInList(sfPlantLife, p.SurfaceFeatures) ||
+		featureInList(sfEdiblePlants, p.SurfaceFeatures) ||
+		featureInList(sfPoisonousPlants, p.SurfaceFeatures) {
+		switch p.Gravity {
+		case grvVeryLow:
+			s += "Forests of impossibly slender alien plants reach kilometres into"
+		case grvLow:
+			s += "Forests of tall alien plants reach hundreds of metres into"
+		case grvModerate:
+			s += "Forests of alien vegetation stretch away beneath"
+		case grvHigh:
+			s += "Fields of squat, thick-limbed alien plants stretch away beneath"
+		case grvVeryHigh:
+			s += "Level fields of alien moss stretch away beneath"
+		default:
+			fmt.Println("error: Unexpected gravity value $gravity.")
+		}
+	} else if p.Water == wtrIceCoveredSurface {
+		switch p.Gravity {
+		case grvVeryLow:
+			s += "Kilometres-high spires of ice reach into"
+		case grvLow:
+			s += "Tall, jagged spires of ice reach into"
+		case grvModerate:
+			s += "Jagged shards of ice stretch away beneath"
+		case grvHigh:
+			s += "A crumpled plain of ice stretches away beneath"
+		case grvVeryHigh:
+			s += "A perfectly flat plain of ice stretches away beneath"
+		default:
+			fmt.Println("error: Unexpected gravity value $gravity.")
+		}
+	} else if p.Atmosphere == atmNone {
+		switch p.Gravity {
+		case grvVeryLow:
+			s += "A jagged landscape of high crater walls and towering shards of rock stretches away beneath"
+		case grvLow:
+			s += "A jagged, cratered landscape stretches away beneath"
+		case grvModerate:
+			s += "A perfectly still, cratered landscape stretches away beneath"
+		case grvHigh:
+			s += "A perfectly still landscape, flat except for a few shallow craters, stretches away beneath"
+		case grvVeryHigh:
+			s += "A perfectly still, flat landscape stretches away beneath"
+		default:
+			fmt.Println("error: Unexpected gravity value $gravity.")
+		}
+	} else {
+		switch p.Gravity {
+		case grvVeryLow:
+			s += "A landscape of spindly rock outcroppings and impossibly tall mountains stretches away beneath"
+		case grvLow:
+			s += "A landscape of huge boulders and towering mountains stretches away beneath"
+		case grvModerate:
+			s += "A barren, rocky landscape stretches away beneath"
+		case grvHigh:
+			s += "A flat, rocky landscape stretches away beneath"
+		case grvVeryHigh:
+			s += "A perfectly flat, barren landscape stretches away beneath"
+		default:
+			fmt.Println("error: Unexpected gravity value $gravity.")
+		}
+	}
+
+	/* Sky (come back to this and add more) */
+	switch p.Atmosphere {
+	case atmBreathable:
+		s += " a blue sky."
+	case atmMarginal:
+		s += " a pale blue sky."
+	case atmNone:
+		s += " a black, star-studded sky."
+	case atmNonBreathable:
+		s += " an alien sky."
+	case atmToxic:
+		s += " a poisonous sky."
+	case atmCorrosive:
+		s += " a sky filled with corrosive clouds."
+	default:
+		fmt.Println("error: Unexpected atmosphere value $atmosphere.")
+	}
+
+	if state.colonists < maxColonists {
+		s += "\nThey build a memorial to the print $max_colonists-$colonists colonists who did not survive the journey, and"
+	} else {
+		s += "\nThey"
+	}
+
+	s += " name their new world " + p.Name + "\n"
+
+	return s
 }

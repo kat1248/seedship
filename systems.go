@@ -92,8 +92,8 @@ func (system ShipSystem) String() string {
 
 */
 
-// Scanner is the data for one of the ships scanners
-type Scanner struct {
+// scannerType is the data for one of the ships scanners
+type scannerType struct {
 	strength int
 	level    int
 	success  bool
@@ -101,11 +101,11 @@ type Scanner struct {
 
 // SystemState is a collection of the different subsystem states
 type SystemState struct {
-	atmosphere               Scanner
-	gravity                  Scanner
-	temperature              Scanner
-	resources                Scanner
-	water                    Scanner
+	atmosphere               scannerType
+	gravity                  scannerType
+	temperature              scannerType
+	resources                scannerType
+	water                    scannerType
 	systemLanding            int
 	systemConstructors       int
 	systemCulturalDatabase   int
@@ -115,8 +115,8 @@ type SystemState struct {
 	offCourse                bool
 	surfaceProbeUsed         bool
 	planetsVisited           int
-	lastEncounter            Encounter
-	lastEncounterCategory    EncounterCategory
+	lastEncounter            encounterType
+	lastEncounterCategory    encounterCategory
 }
 
 func (system SystemState) String() string {
@@ -125,11 +125,11 @@ func (system SystemState) String() string {
 
 func newSystemState() *SystemState {
 	systems := SystemState{
-		atmosphere:               Scanner{strength: maxStrength, level: 0, success: false},
-		gravity:                  Scanner{strength: maxStrength, level: 0, success: false},
-		temperature:              Scanner{strength: maxStrength, level: 0, success: false},
-		resources:                Scanner{strength: maxStrength, level: 0, success: false},
-		water:                    Scanner{strength: maxStrength, level: 0, success: false},
+		atmosphere:               scannerType{strength: maxStrength, level: 0, success: false},
+		gravity:                  scannerType{strength: maxStrength, level: 0, success: false},
+		temperature:              scannerType{strength: maxStrength, level: 0, success: false},
+		resources:                scannerType{strength: maxStrength, level: 0, success: false},
+		water:                    scannerType{strength: maxStrength, level: 0, success: false},
 		offCourse:                false,
 		surfaceProbeUsed:         false,
 		surfaceProbes:            maxProbes,
