@@ -11,11 +11,11 @@ const (
 	maxScorePerPlanetAttribute = 500
 )
 
-// ShipSystem is a set of attributes for a ship
-type ShipSystem int
+// shipSystem is a set of attributes for a ship
+type shipSystem int
 
 const (
-	sysAtmosphereScanner ShipSystem = iota
+	sysAtmosphereScanner shipSystem = iota
 	sysGravityScanner
 	sysTemperatureScanner
 	sysResourcesScanner
@@ -28,7 +28,7 @@ const (
 	sysSleepChambers
 )
 
-func (system ShipSystem) String() string {
+func (system shipSystem) String() string {
 	systems := [...]string{
 		"atmosphere scanner",
 		"gravity scanner",
@@ -145,7 +145,7 @@ func newSystemState() *SystemState {
 	return &systems
 }
 
-func damageSystem(systems *SystemState, system ShipSystem, amount int) {
+func damageSystem(systems *SystemState, system shipSystem, amount int) {
 	/* Silently apply damage to a system */
 	/* system should be the name of the system */
 	/* amount should be the amount of damage */
@@ -194,7 +194,7 @@ func damageSystem(systems *SystemState, system ShipSystem, amount int) {
 	}
 }
 
-func getSystemStrength(systems *SystemState, system ShipSystem) int {
+func getSystemStrength(systems *SystemState, system shipSystem) int {
 	var systemStrength int
 	switch system {
 	case sysAtmosphereScanner:
